@@ -1,9 +1,9 @@
-# Import python packages
 import streamlit as st
 import requests
+import pandas 
+from snowflake.snowpark.functions import col
 # only when connecting inside Snowflake: 
 # from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import col
 
 # Write directly to the app
 st.title(f":cup_with_straw: Customize Your Smoothie! :cup_with_straw:")
@@ -17,12 +17,13 @@ st.write('The name on your Smoothie will be:', name_on_order)
 # only when connecting inside Snowflake: 
 # session = get_active_session() 
 
-#when connecting outside of Snowflake:
+# when connecting outside of Snowflake:
 cnx = st.connection("snowflake")
 session = cnx.session() 
 
-my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
-#st.dataframe(data=my_dataframe, use_container_width=True)
+my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'),col('SEARCH_ON'))
+st.dataframe(data=my_dataframe, use_container_width=True)
+st.stop()
 
 ingredients_list = st.multiselect(
     'Choose up to 5 ingredients:'
@@ -31,9 +32,6 @@ ingredients_list = st.multiselect(
 )
 
 if ingredients_list:
-    #st.write(ingredients_list)
-    #st.text(ingredients_list)
-
     ingredients_string = ''
 
     for fruit_chosen in ingredients_list:
@@ -48,7 +46,6 @@ if ingredients_list:
           values ('""" + ingredients_string + """','""" + name_on_order + """')"""
 
     st.write(my_insert_stmt)
-    #st.stop()
     time_to_insert = st.button('Submit Order')
 
     if time_to_insert:
