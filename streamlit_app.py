@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-import pandas 
+import pandas as pd
 from snowflake.snowpark.functions import col
 # only when connecting inside Snowflake: 
 # from snowflake.snowpark.context import get_active_session
